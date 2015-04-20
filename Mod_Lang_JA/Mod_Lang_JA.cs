@@ -9,8 +9,12 @@ using ColossalFramework.Plugins;
 using System.Reflection;
 using System.Diagnostics;
 
-// This mod is based on Chinese Tradisional localization https://github.com/ccpz/cities-skylines-Mod_Lang_CHT
-// Thank you a lot, Taiwanese creators!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !
+// ! This mod is based on Chinese Tradisional localization https://github.com/ccpz/cities-skylines-Mod_Lang_CHT
+// ! Thank you a lot, Taiwanese creators!
+// !
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 namespace Mod_Lang_JA
 {
@@ -49,83 +53,111 @@ namespace Mod_Lang_JA
 			}
 		}
 
+		private string getDestinationPath()
+		{
+			String dst_path = "";
+			#if (DEBUG)
+			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("OS Type: {0}", RunningPlatform().ToString()));
+			#endif
+			switch (RunningPlatform())
+			{
+			case Platform.Windows:
+				dst_path = "Files\\Locale\\" + locale_name + ".locale";
+				break;
+			case Platform.Mac:
+				dst_path = "Cities.app/Contents/Resources/Files/Locale/" + locale_name + ".locale";
+				break;
+			case Platform.Linux:
+				//TODO: find locale path under linux
+				break;
+			}
+
+			#if (DEBUG)
+			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("Destination {0}", dst_path));
+			#endif
+
+			return dst_path;
+		}
+
+		private void resetLocaleManager(String loc_name)
+		{
+			// Reload Locale Manager
+			ColossalFramework.Globalization.LocaleManager.ForceReload();
+
+			string[] locales = ColossalFramework.Globalization.LocaleManager.instance.supportedLocaleIDs;
+			for (int i = 0; i < locales.Length; i++)
+			{
+				#if (DEBUG)
+				DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("Locale index: {0}, ID: {1}", i, locales[i]));
+				#endif
+				if (locales[i].Equals(loc_name))
+				{
+					#if (DEBUG)
+					DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("Find locale {0} at index: {1}", loc_name, i));
+					#endif
+					ColossalFramework.Globalization.LocaleManager.instance.LoadLocaleByIndex(i);
+
+					//thanks to: https://github.com/Mesoptier/SkylineToolkit/commit/d33f0bae67662df25bdf8ee2170d95a6999c3721
+					ColossalFramework.SavedString lang_setting = new ColossalFramework.SavedString("localeID", "gameSettings");
+					#if (DEBUG)
+					DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("Current Language Setting: {0}", lang_setting.value));
+					#endif
+					lang_setting.value = locale_name;
+					ColossalFramework.GameSettings.SaveAll();                                
+					break;
+				}
+			}
+		}
+
+		private void copyLocaleFile(String dst_path)
+		{
+			Assembly asm = Assembly.GetExecutingAssembly();
+			Stream st = asm.GetManifestResourceStream(asm.GetName().Name+"."+locale_name+".locale");
+			#if (DEBUG)
+			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File size: {0}", st.Length));
+			#endif
+
+			FileStream dst = File.OpenWrite(dst_path);
+
+			byte[] buffer = new byte[8 * 1024];
+			int len = 0;
+			while ((len = st.Read(buffer, 0, buffer.Length)) > 0)
+			{
+				dst.Write(buffer, 0, len);
+			}
+			dst.Close();
+			st.Close();
+	
+			#if (DEBUG)
+			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File write to: {0}", Path.GetFullPath(dst.Name)));
+			#endif
+		}
+
 		public string Name
 		{
-			get {
+			get
+			{
 				try
 				{
 					Boolean first_install = true;
-					Assembly asm = Assembly.GetExecutingAssembly();
-					Stream st = asm.GetManifestResourceStream(asm.GetName().Name+"."+locale_name+".locale");
 
-					#if (DEBUG)
-					DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File size: {0}", st.Length));
-					#endif
-					String dst_path = "";
-					#if (DEBUG)
-					DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("OS Type: {0}", RunningPlatform().ToString()));
-					#endif
-					switch (RunningPlatform())
+					String dst_path = getDestinationPath();
+
+					if (dst_path.Length > 0)
 					{
-					case Platform.Windows:
-						dst_path = "Files\\Locale\\" + locale_name + ".locale";
-						break;
-					case Platform.Mac:
-						dst_path = "Cities.app/Contents/Resources/Files/Locale/" + locale_name + ".locale";
-						break;
-					case Platform.Linux:
-						//TODO: find locale path under linux
-						break;
-					}
-
-					if (File.Exists(dst_path))
-					{
-						#if (DEBUG)
-						DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Locale file is found, user has already used this mod before.");
-						#endif
-						first_install = false;
-					}
-
-					FileStream dst = File.OpenWrite(dst_path);
-
-					byte[] buffer = new byte[8 * 1024];
-					int len=0;
-					while ((len = st.Read(buffer, 0, buffer.Length)) > 0)
-					{
-						dst.Write(buffer, 0, len);
-					}
-					dst.Close();
-					st.Close();
-
-					#if (DEBUG)
-					DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File write to: {0}", Path.GetFullPath(dst.Name)));
-					#endif
-					ColossalFramework.Globalization.LocaleManager.ForceReload();
-
-					if (first_install == true)
-					{
-						string[] locales = ColossalFramework.Globalization.LocaleManager.instance.supportedLocaleIDs;
-						for (int i = 0; i < locales.Length; i++)
+						if (File.Exists(dst_path))
 						{
 							#if (DEBUG)
-							DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("Locale index: {0}, ID: {1}", i, locales[i]));
+							DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Locale file is found, user has already used this mod before.");
 							#endif
-							if (locales[i].Equals(locale_name))
-							{
-								#if (DEBUG)
-								DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("Find locale {0} at index: {1}", locale_name, i));
-								#endif
-								ColossalFramework.Globalization.LocaleManager.instance.LoadLocaleByIndex(i);
+							first_install = false;
+						}
 
-								//thanks to: https://github.com/Mesoptier/SkylineToolkit/commit/d33f0bae67662df25bdf8ee2170d95a6999c3721
-								ColossalFramework.SavedString lang_setting = new ColossalFramework.SavedString("localeID", "gameSettings");
-								#if (DEBUG)
-								DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("Current Language Setting: {0}", lang_setting.value));
-								#endif
-								lang_setting.value = locale_name;
-								ColossalFramework.GameSettings.SaveAll();                                
-								break;
-							}
+						copyLocaleFile(dst_path);
+
+						if (first_install == true)
+						{
+							resetLocaleManager(locale_name);
 						}
 					}
 				}
@@ -133,7 +165,8 @@ namespace Mod_Lang_JA
 				{
 					DebugOutputPanel.AddMessage(PluginManager.MessageType.Error, e.ToString());
 				}
-				return "Japanese localization Mod"; 
+
+				return "Japanese localization Mod";
 			}
 		}
 
@@ -141,5 +174,29 @@ namespace Mod_Lang_JA
 		{
 			get { return "Japanese Localization v4.1, by volunteers on 2ch.net."; }
 		}
+
+//		public void OnEnabled()
+//		{
+//			;
+//		}
+//
+//		public void OnDisabled()
+//		{
+//			try
+//			{
+//				resetLocaleManager("en");
+//
+//				String dst_path = getDestinationPath();
+//
+//				if (dst_path.Length > 0)
+//				{
+//					File.Delete (dst_path);
+//				}
+//			}
+//			catch (Exception e)
+//			{
+//				DebugOutputPanel.AddMessage(PluginManager.MessageType.Error, e.ToString());
+//			}
+//		}
 	}
 }
