@@ -22,7 +22,9 @@ namespace Mod_Lang_JA
 	{
 		private string locale_name = "ja";
 
+		//
 		//the following OS detect code is referring http://stackoverflow.com/questions/10138040/how-to-detect-properly-windows-linux-mac-operating-systems
+		//
 		public enum Platform
 		{
 			Windows,
@@ -53,6 +55,9 @@ namespace Mod_Lang_JA
 			}
 		}
 
+		//------------------------------------------------------------
+		// Create destination path to copy the locale file to
+		//------------------------------------------------------------
 		private string getDestinationPath()
 		{
 			String dst_path = "";
@@ -68,7 +73,7 @@ namespace Mod_Lang_JA
 				dst_path = "Cities.app/Contents/Resources/Files/Locale/" + locale_name + ".locale";
 				break;
 			case Platform.Linux:
-				//TODO: find locale path under linux
+				dst_path = "Files/Locale/" + locale_name + ".locale";
 				break;
 			}
 
@@ -79,6 +84,9 @@ namespace Mod_Lang_JA
 			return dst_path;
 		}
 
+		//------------------------------------------------------------
+		// Force to reload the locale manager
+		//------------------------------------------------------------
 		private void resetLocaleManager(String loc_name)
 		{
 			// Reload Locale Manager
@@ -109,6 +117,9 @@ namespace Mod_Lang_JA
 			}
 		}
 
+		//------------------------------------------------------------
+		// Copy the locale file
+		//------------------------------------------------------------
 		private void copyLocaleFile(String dst_path)
 		{
 			Assembly asm = Assembly.GetExecutingAssembly();
@@ -133,38 +144,49 @@ namespace Mod_Lang_JA
 			#endif
 		}
 
+		//============================================================
+		// Main
+		//============================================================
+		private void CopyLocaleAndReloadLocaleManager()
+		{
+			try
+			{
+				Boolean first_install = true;
+
+				String dst_path = getDestinationPath();
+
+				if (dst_path.Length > 0)
+				{
+					if (File.Exists(dst_path))
+					{
+						#if (DEBUG)
+						DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Locale file is found, user has already used this mod before.");
+						#endif
+						first_install = false;
+					}
+
+					copyLocaleFile(dst_path);
+
+					if (first_install == true)
+					{
+						resetLocaleManager(locale_name);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				DebugOutputPanel.AddMessage(PluginManager.MessageType.Error, e.ToString());
+			}
+		}
+
+		//============================================================
+		// Modding API
+		//============================================================
 		public string Name
 		{
 			get
 			{
-				try
-				{
-					Boolean first_install = true;
-
-					String dst_path = getDestinationPath();
-
-					if (dst_path.Length > 0)
-					{
-						if (File.Exists(dst_path))
-						{
-							#if (DEBUG)
-							DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Locale file is found, user has already used this mod before.");
-							#endif
-							first_install = false;
-						}
-
-						copyLocaleFile(dst_path);
-
-						if (first_install == true)
-						{
-							resetLocaleManager(locale_name);
-						}
-					}
-				}
-				catch (Exception e)
-				{
-					DebugOutputPanel.AddMessage(PluginManager.MessageType.Error, e.ToString());
-				}
+				CopyLocaleAndReloadLocaleManager ();
 
 				return "Japanese localization Mod";
 			}
