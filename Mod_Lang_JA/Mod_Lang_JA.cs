@@ -123,7 +123,7 @@ namespace Mod_Lang_JA
 		private void copyLocaleFile(String dst_path)
 		{
 			Assembly asm = Assembly.GetExecutingAssembly();
-			Stream st = asm.GetManifestResourceStream(asm.GetName().Name+"."+locale_name+".locale");
+			Stream src = asm.GetManifestResourceStream(asm.GetName().Name+"."+locale_name+".locale");
 			#if (DEBUG)
 			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File size: {0}", st.Length));
 			#endif
@@ -132,12 +132,12 @@ namespace Mod_Lang_JA
 
 			byte[] buffer = new byte[8 * 1024];
 			int len = 0;
-			while ((len = st.Read(buffer, 0, buffer.Length)) > 0)
+			while ((len = src.Read(buffer, 0, buffer.Length)) > 0)
 			{
 				dst.Write(buffer, 0, len);
 			}
 			dst.Close();
-			st.Close();
+			src.Close();
 	
 			#if (DEBUG)
 			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File write to: {0}", Path.GetFullPath(dst.Name)));
@@ -194,7 +194,7 @@ namespace Mod_Lang_JA
 
 		public string Description
 		{
-			get { return "Japanese Localization v4.1, by volunteers on 2ch.net."; }
+			get { return "Japanese Localization v5.0, by volunteers on 2ch.net."; }
 		}
 
 //		public void OnEnabled()
