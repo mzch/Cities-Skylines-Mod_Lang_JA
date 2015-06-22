@@ -194,7 +194,7 @@ namespace Mod_Lang_JA
 
 		public string Description
 		{
-			get { return "Japanese Localization v5.0, by volunteers on 2ch.net."; }
+			get { return "Japanese Localization v5.1, by volunteers on 2ch.net."; }
 		}
 
 //		public void OnEnabled()
