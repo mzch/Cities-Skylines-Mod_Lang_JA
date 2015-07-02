@@ -194,31 +194,7 @@ namespace Mod_Lang_JA
 
 		public string Description
 		{
-			get { return "Japanese Localization v5.1, by volunteers on 2ch.net."; }
+			get { return "Japanese Localization v6.0, by volunteers on 2ch.net."; }
 		}
-
-//		public void OnEnabled()
-//		{
-//			;
-//		}
-//
-//		public void OnDisabled()
-//		{
-//			try
-//			{
-//				resetLocaleManager("en");
-//
-//				String dst_path = getDestinationPath();
-//
-//				if (dst_path.Length > 0)
-//				{
-//					File.Delete (dst_path);
-//				}
-//			}
-//			catch (Exception e)
-//			{
-//				DebugOutputPanel.AddMessage(PluginManager.MessageType.Error, e.ToString());
-//			}
-//		}
 	}
 }
