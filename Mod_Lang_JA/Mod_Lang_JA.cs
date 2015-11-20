@@ -125,9 +125,11 @@ namespace Mod_Lang_JA
 			Assembly asm = Assembly.GetExecutingAssembly();
 			Stream src = asm.GetManifestResourceStream(asm.GetName().Name+"."+locale_name+".locale");
 			#if (DEBUG)
-			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File size: {0}", st.Length));
+			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File size: {0}", src.Length));
 			#endif
 
+			//File.OpenWrite won't truncate file, so delete it first
+			File.Delete(dst_path);
 			FileStream dst = File.OpenWrite(dst_path);
 
 			byte[] buffer = new byte[8 * 1024];
