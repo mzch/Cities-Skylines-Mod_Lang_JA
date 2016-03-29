@@ -22,6 +22,8 @@ namespace Mod_Lang_JA
 	{
 		private string locale_name = "ja";
 
+        private bool initialized;
+
 		//
 		//the following OS detect code is referring http://stackoverflow.com/questions/10138040/how-to-detect-properly-windows-linux-mac-operating-systems
 		//
@@ -188,7 +190,11 @@ namespace Mod_Lang_JA
 		{
 			get
 			{
-				CopyLocaleAndReloadLocaleManager ();
+                if (!initialized)
+                {
+                    CopyLocaleAndReloadLocaleManager();
+                }
+                initialized = true;
 
 				return "Japanese localization Mod";
 			}
