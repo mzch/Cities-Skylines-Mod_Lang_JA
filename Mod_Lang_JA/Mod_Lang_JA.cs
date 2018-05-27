@@ -202,7 +202,7 @@ namespace Mod_Lang_JA
 
 		public string Description
 		{
-			get { return "Japanese Localization v15.0, by volunteers on 5ch.net."; }
+			get { return "Japanese Localization v15.1, by volunteers on 5ch.net."; }
 		}
 	}
 }
