@@ -142,6 +142,8 @@ namespace Mod_Lang_JA
 			}
 			dst.Close();
 			src.Close();
+
+			buffer = null;
 	
 			#if (DEBUG)
 			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File write to: {0}", Path.GetFullPath(dst.Name)));
@@ -196,13 +198,13 @@ namespace Mod_Lang_JA
                 }
                 initialized = true;
 
-				return "Japanese localization Mod";
+				return "Japanese Localization Mod";
 			}
 		}
 
 		public string Description
 		{
-			get { return "Japanese Localization v17.1, by volunteers on Discord and csnihon.com"; }
+			get { return "Japanese Localization v18.1, by volunteers on Discord and csnihon.com"; }
 		}
 	}
 }
