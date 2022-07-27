@@ -202,7 +202,7 @@ namespace Mod_Lang_JA
 
 		public string Description
 		{
-			get { return "Japanese Localization v19.2, by volunteers on Discord and csnihon.com"; }
+			get { return "Japanese Localization v19.3, by volunteers on Discord and csnihon.com"; }
 		}
 	}
 }
