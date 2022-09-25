@@ -155,7 +155,7 @@ namespace Mod_Lang_JA
 		{
 			try
 			{
-				Boolean first_install = true;
+				// Boolean first_install = true;
 
 				String dst_path = getDestinationPath();
 
@@ -166,15 +166,15 @@ namespace Mod_Lang_JA
 						#if (DEBUG)
 						DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Locale file is found, user has already used this mod before.");
 						#endif
-						first_install = false;
+						// first_install = false;
 					}
 
 					copyLocaleFile(dst_path);
 
-					if (first_install == true)
-					{
-						resetLocaleManager(locale_name);
-					}
+					// if (first_install == true)
+					// {
+					resetLocaleManager(locale_name);
+					// }
 				}
 			}
 			catch (Exception e)
@@ -202,7 +202,7 @@ namespace Mod_Lang_JA
 
 		public string Description
 		{
-			get { return "Japanese Localization v20.1, by volunteers on Discord and csnihon.com"; }
+			get { return "Japanese Localization v20.2, by volunteers on Discord and csnihon.com"; }
 		}
 	}
 }
