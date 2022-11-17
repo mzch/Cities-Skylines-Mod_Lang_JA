@@ -17,7 +17,7 @@ namespace Mod_Lang_JA
 	{
 		private string locale_name = "ja";
 
-        private bool initialized;
+		private bool initialized = false;
 
 		//
 		//the following OS detect code is referring http://stackoverflow.com/questions/10138040/how-to-detect-properly-windows-linux-mac-operating-systems
@@ -125,8 +125,6 @@ namespace Mod_Lang_JA
 			DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("File size: {0}", src.Length));
 			#endif
 
-			//File.OpenWrite won't truncate file, so delete it first
-			File.Delete(dst_path);
 			FileStream dst = File.OpenWrite(dst_path);
 
 			byte[] buffer = new byte[8 * 1024];
@@ -150,26 +148,26 @@ namespace Mod_Lang_JA
 		{
 			try
 			{
-				// Boolean first_install = true;
-
 				String dst_path = getDestinationPath();
 
 				if (dst_path.Length > 0)
 				{
 					if (File.Exists(dst_path))
 					{
+                        //File.OpenWrite won't truncate file, so delete it first
+                        File.Delete(dst_path);
 						#if (DEBUG)
 						DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Locale file is found, user has already used this mod before.");
 						#endif
-						// first_install = false;
-					}
+                        initialized = true;
+                    }
 
-					copyLocaleFile(dst_path);
+                    copyLocaleFile(dst_path);
 
-					//if (first_install == true)
-					//{
+					if (initialized == false)
+					{
 						resetLocaleManager(locale_name);
-					//}
+					}
 				}
 			}
 			catch (Exception e)
