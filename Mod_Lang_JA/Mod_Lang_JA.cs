@@ -195,7 +195,7 @@ namespace Mod_Lang_JA
 
 		public string Description
 		{
-			get { return "Japanese Localization the Final version, by volunteers on Discord: Cities Skylines Japan"; }
+			get { return "Japanese Localization the Final for Patch 1.17.1-f2, by volunteers on Discord: Cities Skylines Japan"; }
 		}
 	}
 }
